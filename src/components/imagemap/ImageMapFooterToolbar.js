@@ -12,6 +12,11 @@ class ImageMapFooterToolbar extends Component {
 		preview: PropTypes.bool,
 		onChangePreview: PropTypes.func,
 		zoomRatio: PropTypes.number,
+		pageNumber: PropTypes.number,
+		isPrev: PropTypes.bool,
+		isNext: PropTypes.bool,
+		nextPage: PropTypes.func,
+		prevPage: PropTypes.func
 	};
 
 	state = {
@@ -65,6 +70,9 @@ class ImageMapFooterToolbar extends Component {
 			this.props.canvasRef.handler.interactionHandler.grab();
 			this.setState({ interactionMode: 'grab' });
 		},
+		nextPage: () => {
+			
+		}
 	};
 
 	events = {
@@ -112,6 +120,7 @@ class ImageMapFooterToolbar extends Component {
 						/>
 					</Button.Group>
 				</div>
+
 				<div className="rde-editor-footer-toolbar-zoom">
 					<Button.Group>
 						<CommonButton
@@ -144,6 +153,35 @@ class ImageMapFooterToolbar extends Component {
 							}}
 							icon="search-plus"
 							tooltipTitle={i18n.t('action.zoom-in')}
+						/>
+					</Button.Group>
+					<Button.Group style={{ marginLeft: '8px' }}>
+						<CommonButton
+							style={{ borderBottomLeftRadius: '8px', borderTopLeftRadius: '8px' }}
+							disabled = {!this.props.isPrev}
+							onClick={() => {
+								this.props.isPrev && this.props.prevPage()
+							}}
+							icon="angle-left"
+							tooltipTitle={i18n.t('action.prev')}
+						/>
+						<CommonButton
+							onClick={() => {
+								canvasRef.handler.zoomHandler.zoomOneToOne();
+							}}
+							tooltipTitle={i18n.t('action.one-to-one')}
+						>
+							{this.props.pageNumber}
+						</CommonButton>
+						<CommonButton
+							type={interactionMode === 'grab' ? 'primary' : 'default'}
+							style={{ borderBottomRightRadius: '8px', borderTopRightRadius: '8px' }}
+							disabled = {!this.props.isNext}
+							onClick={() => {
+								this.props.isNext && this.props.nextPage()
+							}}
+							tooltipTitle={i18n.t('action.next')}
+							icon="angle-right"
 						/>
 					</Button.Group>
 				</div>

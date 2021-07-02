@@ -9,6 +9,7 @@ export default {
 			return null;
 		}
 		const type = data.animation.type || 'none';
+		console.log('type :>> ', type);
 		return (
 			<React.Fragment>
 				<Form.Item label="Animation Type" colon={false}>
@@ -230,7 +231,13 @@ export default {
 			component = (
 				<Row>
 					<Col span={12}>
+						{console.log('caql; :>> ')}
 						<Form.Item label="Fill Color" colon={false}>
+							{getFieldDecorator('animation.fill', {
+								initialValue: data.animation.fill || data.fill,
+							})(<ColorPicker />)}
+						</Form.Item>
+						<Form.Item label="Filldcdfd" colon={false}>
 							{getFieldDecorator('animation.fill', {
 								initialValue: data.animation.fill || data.fill,
 							})(<ColorPicker />)}

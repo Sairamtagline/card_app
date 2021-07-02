@@ -18,6 +18,7 @@ class MapProperties extends Component {
 		if (canvasRef) {
 			return (
 				<Scrollbar>
+
 					<Form layout="horizontal">
 						<Collapse bordered={false}>
 							{Object.keys(PropertyDefinition.map).map(key => {
@@ -43,6 +44,7 @@ class MapProperties extends Component {
 export default Form.create({
 	onValuesChange: (props, changedValues, allValues) => {
 		const { onChange, selectedItem } = props;
+		console.log('calleds :>> ');
 		onChange(selectedItem, changedValues, { workarea: allValues });
 	},
 })(MapProperties);

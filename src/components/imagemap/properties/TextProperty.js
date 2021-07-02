@@ -10,6 +10,7 @@ const fonts = Fonts.getFonts();
 export default {
 	render(canvasRef, form, data) {
 		const { getFieldDecorator } = form;
+		console.log('data 45545648:>> ', data);
 		return (
 			<React.Fragment>
 				<Col span={16}>

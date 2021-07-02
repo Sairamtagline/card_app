@@ -14,6 +14,12 @@ export default {
 						initialValue: data.fill || 'rgba(0, 0, 0, 1)',
 					})(<ColorPicker />)}
 				</Form.Item>
+				{console.log('data :>> ', data)}
+				<Form.Item label={i18n.t('imagemap.style.fill-color')} colon={false}>
+					{getFieldDecorator('stroke', {
+						initialValue: data.stroke || 'rgba(0, 0, 0, 1)',
+					})(<ColorPicker />)}
+				</Form.Item>
 				<Form.Item label={i18n.t('common.opacity')} colon={false}>
 					{getFieldDecorator('opacity', {
 						rules: [

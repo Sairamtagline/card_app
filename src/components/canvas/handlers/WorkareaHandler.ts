@@ -74,6 +74,7 @@ class WorkareaHandler {
 				});
 			}
 		});
+		
 		if (isResponsive) {
 			const center = canvas.getCenter();
 			if (isElement) {

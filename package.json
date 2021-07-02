@@ -48,6 +48,7 @@
 	"dependencies": {
 		"animejs": "^3.0.0",
 		"antd": "3.15.0",
+		"axios": "^0.21.1",
 		"classnames": "^2.2.6",
 		"color": "^3.1.2",
 		"echarts": "^4.7.0",

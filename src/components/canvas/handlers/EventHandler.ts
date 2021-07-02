@@ -575,6 +575,7 @@ class EventHandler {
 				return;
 			}
 			this.handler.canvas.getObjects().forEach((obj: FabricObject) => {
+				console.log(`obj`, obj)
 				if (obj.id !== 'workarea') {
 					const left = obj.left + diffWidth;
 					const top = obj.top + diffHeight;

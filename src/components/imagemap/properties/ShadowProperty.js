@@ -23,6 +23,11 @@ export default {
 								initialValue: data.shadow.color || 'rgba(0, 0, 0, 0)',
 							})(<ColorPicker />)}
 						</Form.Item>
+						<Form.Item label={i18n.t('common.color')} colon={false}>
+							{getFieldDecorator('animation.color', {
+								initialValue: data.animation.color || 'rgba(0, 0, 0, 0)',
+							})(<ColorPicker />)}
+						</Form.Item>
 						<Form.Item label={i18n.t('common.blur')} colon={false}>
 							{getFieldDecorator('shadow.blur', {
 								rules: [

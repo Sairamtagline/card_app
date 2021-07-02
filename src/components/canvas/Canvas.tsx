@@ -48,8 +48,7 @@ class Canvas extends Component<CanvasProps, IState> {
 		const { editable, canvasOption, width, height, responsive, ...other } = this.props;
 		const { id } = this.state;
 		const mergedCanvasOption = Object.assign({}, defaults.canvasOption, canvasOption, {
-			width,
-			height,
+			width: 1280, height: 720,
 			selection: editable,
 		});
 		this.canvas = new fabric.Canvas(`canvas_${id}`, mergedCanvasOption);
@@ -65,6 +64,12 @@ class Canvas extends Component<CanvasProps, IState> {
 			canvasOption: mergedCanvasOption,
 			...other,
 		});
+		
+		this.handler.workarea.set({
+			width: 280,
+			height: 450,
+		})
+
 		if (this.props.responsive) {
 			this.createObserver();
 		} else {
@@ -124,6 +129,7 @@ class Canvas extends Component<CanvasProps, IState> {
 	createObserver = () => {
 		this.resizeObserver = new ResizeObserver((entries: ResizeObserverEntry[]) => {
 			const { width = 0, height = 0 } = (entries[0] && entries[0].contentRect) || {};
+			console.log('entries[0].contentRect :>> ', entries[0]);
 			this.handler.eventHandler.resize(width, height);
 			if (!this.state.loaded) {
 				this.handleLoad();

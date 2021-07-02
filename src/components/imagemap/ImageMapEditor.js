@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import { Badge, Button, Popconfirm, Menu } from 'antd';
 import debounce from 'lodash/debounce';
 import i18n from 'i18next';
-
 import ImageMapFooterToolbar from './ImageMapFooterToolbar';
 import ImageMapItems from './ImageMapItems';
 import ImageMapTitle from './ImageMapTitle';
@@ -17,6 +16,7 @@ import Container from '../common/Container';
 import CommonButton from '../common/CommonButton';
 import Canvas from '../canvas/Canvas';
 import { code } from '../canvas/constants';
+import { addDataApi, getDataApi, getPreviewDataApi, verifyToken } from '../../api/canvasApi';
 
 const propertiesToInclude = [
 	'id',
@@ -79,6 +79,7 @@ const defaultOption = {
 
 class ImageMapEditor extends Component {
 	state = {
+		canvasloading: true,
 		selectedItem: null,
 		zoomRatio: 1,
 		preview: false,
@@ -90,7 +91,89 @@ class ImageMapEditor extends Component {
 		editing: false,
 		descriptors: {},
 		objects: undefined,
+		userId: "",
+		productId: "",
+		previewCloseButton: true,
+		page: 1,
 	};
+
+	componentWillMount() {
+		this.setState({
+			canvasloading: true
+		})
+
+		const fetchPreviewdata = async (id) => {
+			try {
+				const res = await getPreviewDataApi(id, this.state.page)
+				let data = JSON.parse(res.data.data[0].custom_string_data)
+				console.log('res.data.data[0].custom_string_data.objects :>> ', data.objects);
+				// const res = await getDataApi(this.state.userId)
+				// this.handlers.onFetch(res.data.data[0].custom_string_data, true)
+				this.handlers.onChangePreview(false, false)
+				this.handlers.onChangePreview(true, false, data.objects)
+				this.setState({
+					canvasloading: false
+				})
+			} catch (e) {
+				this.setState({
+					canvasloading: false
+				})
+			}
+		}
+		const verifyUser = async () => {
+			try {
+				const urlSearchParams = new URLSearchParams(window.location.search);
+				const token = urlSearchParams.get('token');
+				const preview = urlSearchParams.get('preview');
+				console.log('preview :>> ', preview);
+				if (preview) {
+					this.handlers.onChangePreview(true, false)
+					fetchPreviewdata(preview)
+				}
+				else {
+					const response = await verifyToken(token)
+					if (response?.data?.data) {
+						this.setState({ userId: response.data.data.userData.user_id, productId: response.data.data.userData.product_id })
+						this.fetchdata(response.data.data.userData.user_id, this.state.page)
+					}
+					console.log('response :>> ', response, response.data.data.userData.user_id);
+				}
+			} catch (error) {
+				console.log('error :>> ', error);
+			}
+		}
+		verifyUser()
+
+		// const fetchdata = async (id) => {
+		// 	try {
+		// 		const res = await getDataApi(id)
+		// 		// const res = await getDataApi(this.state.userId)
+		// 		this.handlers.onFetch(res.data.data[0].custom_string_data)
+		// 		this.setState({
+		// 			canvasloading: false
+		// 		})
+		// 	} catch (e) {
+		// 		this.setState({
+		// 			canvasloading: false
+		// 		})
+		// 	}
+		// }
+	}
+
+	fetchdata = async (id, page) => {
+		try {
+			const res = await getDataApi(id, page)
+			// const res = await getDataApi(this.state.userId)
+			this.handlers.onFetch(res.data.data[0].custom_string_data)
+			this.setState({
+				canvasloading: false
+			})
+		} catch (e) {
+			this.setState({
+				canvasloading: false
+			})
+		}
+	}
 
 	componentDidMount() {
 		this.showLoading(true);
@@ -108,6 +191,32 @@ class ImageMapEditor extends Component {
 			selectedItem: null,
 		});
 		this.shortcutHandlers.esc();
+
+		// const fetchdata = async () => {
+		// 	try {
+		// 		const res = await getDataApi(10)
+		// 		// const res = await getDataApi(this.state.userId)
+		// 		this.handlers.onFetch(res.data.data[0].custom_string_data)
+		// 		this.setState({
+		// 			canvasloading: false
+		// 		})
+		// 	} catch (e) {
+		// 		this.setState({
+		// 			canvasloading: false
+		// 		})
+		// 	}
+		// }
+		// setTimeout(() => {
+		// 	this.fetchdata(this.state.userId)
+		// }, 10000);
+		// this.handlers.onImport(e.target.files);
+	}
+
+	componentDidUpdate = (prev, prevState) => {
+		console.log('object :>> ', prev, prevState, this.state);
+		if (prevState.page !== this.state.page) {
+			this.fetchdata(this.state.userId, this.state.page)
+		}
 	}
 
 	canvasHandlers = {
@@ -483,9 +592,10 @@ class ImageMapEditor extends Component {
 	};
 
 	handlers = {
-		onChangePreview: checked => {
-			let data;
-			if (this.canvasRef) {
+		onChangePreview: (checked, closeButton, data) => {
+			console.log('checked :>> ', checked);
+			// let data;
+			if (!data && this.canvasRef) {
 				data = this.canvasRef.handler.exportJSON().filter(obj => {
 					if (!obj.id) {
 						return false;
@@ -493,9 +603,12 @@ class ImageMapEditor extends Component {
 					return true;
 				});
 			}
+			console.log('data :>> ', data);
+
 			this.setState({
 				preview: typeof checked === 'object' ? false : checked,
-				objects: data,
+				objects: data || [],
+				previewCloseButton: !!closeButton
 			});
 		},
 		onProgress: progress => {
@@ -503,6 +616,39 @@ class ImageMapEditor extends Component {
 				progress,
 			});
 		},
+
+		onFetch: (data) => {
+			const { objects, animations, styles, dataSources } = JSON.parse(data);
+			this.setState({
+				animations,
+				styles,
+				dataSources,
+			});
+			if (objects) {
+				this.canvasRef.handler.clear(true);
+				const data = objects.filter(obj => {
+					if (!obj.id) {
+						return false;
+					}
+					return true;
+				});
+				this.canvasRef.handler.importJSON(data);
+			}
+		},
+
+		onCopy: (data) => {
+			console.log('window.location.href :>> ', window.location, window.location.origin + `/?preview=${"fGczTwJQZ2K3nO2SjmI9sj8ZiudeLykc"}`);
+			// function copy(text) {
+			var input = document.createElement('textarea');
+			input.innerHTML = window.location.origin + window.location.pathname + `?preview=${"fGczTwJQZ2K3nO2SjmI9sj8ZiudeLykc"}`;
+			document.body.appendChild(input);
+			input.select();
+			var result = document.execCommand('copy');
+			document.body.removeChild(input);
+			return result;
+			// }
+		},
+
 		onImport: files => {
 			if (files) {
 				this.showLoading(true);
@@ -569,6 +715,14 @@ class ImageMapEditor extends Component {
 				styles,
 				dataSources,
 			};
+			// console.log('exportDatas :>> ', exportDatas, exportDatas?.objects[1]?.src);
+			// addDataApi("32", JSON.stringify(exportDatas))
+			// // axios
+			// // 	.post("http://192.168.1.31:3000/upload", { string: JSON.stringify(exportDatas) })
+			// // 	.then(res => {
+			// // 		console.log('res :>> ', res);
+			// // 	})
+			// // 	.catch(err => console.error(err));
 			const anchorEl = document.createElement('a');
 			anchorEl.href = `data:text/json;charset=utf-8,${encodeURIComponent(
 				JSON.stringify(exportDatas, null, '\t'),
@@ -577,6 +731,25 @@ class ImageMapEditor extends Component {
 			document.body.appendChild(anchorEl); // required for firefox
 			anchorEl.click();
 			anchorEl.remove();
+			this.showLoading(false);
+		},
+		onSave: () => {
+			this.showLoading(true);
+			const objects = this.canvasRef.handler.exportJSON().filter(obj => {
+				if (!obj.id) {
+					return false;
+				}
+				return true;
+			});
+			const { animations, styles, dataSources } = this.state;
+			const exportDatas = {
+				objects,
+				animations,
+				styles,
+				dataSources,
+			};
+			console.log('exportDatas :>> ', exportDatas, exportDatas?.objects[1]?.src);
+			addDataApi(this.state?.userId, this.state.page, JSON.stringify(exportDatas))
 			this.showLoading(false);
 		},
 		onChangeAnimations: animations => {
@@ -647,6 +820,8 @@ class ImageMapEditor extends Component {
 			editing,
 			descriptors,
 			objects,
+			previewCloseButton,
+			page,
 		} = this.state;
 		const {
 			onAdd,
@@ -663,6 +838,8 @@ class ImageMapEditor extends Component {
 		const {
 			onChangePreview,
 			onDownload,
+			onSave,
+			onCopy,
 			onUpload,
 			onChangeAnimations,
 			onChangeStyles,
@@ -671,6 +848,25 @@ class ImageMapEditor extends Component {
 		} = this.handlers;
 		const action = (
 			<React.Fragment>
+				<CommonButton
+					className="rde-action-btn"
+					shape="circle"
+					icon="copy"
+					tooltipTitle={i18n.t('action.previewLink')}
+					onClick={onCopy}
+					// onClick={onDownload}
+					tooltipPlacement="bottomRight"
+				/>
+				<CommonButton
+					className="rde-action-btn"
+					shape="circle"
+					icon="save"
+					disabled={!editing}
+					tooltipTitle={i18n.t('action.save')}
+					onClick={onSave}
+					// onClick={onDownload}
+					tooltipPlacement="bottomRight"
+				/>
 				<CommonButton
 					className="rde-action-btn"
 					shape="circle"
@@ -718,7 +914,7 @@ class ImageMapEditor extends Component {
 		);
 		const titleContent = (
 			<React.Fragment>
-				<span>{i18n.t('imagemap.imagemap-editor')}</span>
+				{/* <span>{i18n.t('imagemap.imagemap-editor')}</span> */}
 			</React.Fragment>
 		);
 		const title = <ImageMapTitle title={titleContent} action={action} />;
@@ -774,6 +970,11 @@ class ImageMapEditor extends Component {
 							preview={preview}
 							onChangePreview={onChangePreview}
 							zoomRatio={zoomRatio}
+							pageNumber={page}
+							isPrev={page > 1}
+							isNext={page < 4}
+							nextPage={() => this.setState((prev) => ({ ...prev, page: prev.page + 1 }))}
+							prevPage={() => this.setState((prev) => ({ ...prev, page: prev.page - 1 }))}
 						/>
 					</div>
 				</div>
@@ -789,6 +990,7 @@ class ImageMapEditor extends Component {
 					dataSources={dataSources}
 				/>
 				<ImageMapPreview
+					previewCloseButton={previewCloseButton}
 					preview={preview}
 					onChangePreview={onChangePreview}
 					onTooltip={onTooltip}
