@@ -24,7 +24,6 @@ module.exports = merge(baseConfig, {
 	},
 	devServer: {
 		inline: true,
-		port: devPort,
 		contentBase: path.resolve(__dirname, 'public'),
 		hot: true,
 		publicPath: '/',
