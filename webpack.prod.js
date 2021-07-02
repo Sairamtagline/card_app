@@ -28,7 +28,6 @@ module.exports = merge(baseConfig, {
 		hot: true,
 		publicPath: '/',
 		historyApiFallback: true,
-		host,
 		proxy: {
 			'/api': {
 				target: 'http://localhost',
