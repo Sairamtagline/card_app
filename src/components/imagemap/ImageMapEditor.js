@@ -93,8 +93,10 @@ class ImageMapEditor extends Component {
 		objects: undefined,
 		userId: "",
 		productId: "",
+		orderId: "",
 		previewCloseButton: true,
 		page: 1,
+		clearPage: false,
 	};
 
 	componentWillMount() {
@@ -106,9 +108,6 @@ class ImageMapEditor extends Component {
 			try {
 				const res = await getPreviewDataApi(id, this.state.page)
 				let data = JSON.parse(res.data.data[0].custom_string_data)
-				console.log('res.data.data[0].custom_string_data.objects :>> ', data.objects);
-				// const res = await getDataApi(this.state.userId)
-				// this.handlers.onFetch(res.data.data[0].custom_string_data, true)
 				this.handlers.onChangePreview(false, false)
 				this.handlers.onChangePreview(true, false, data.objects)
 				this.setState({
@@ -132,11 +131,12 @@ class ImageMapEditor extends Component {
 				}
 				else {
 					const response = await verifyToken(token)
-					if (response?.data?.data) {
-						this.setState({ userId: response.data.data.userData.user_id, productId: response.data.data.userData.product_id })
-						this.fetchdata(response.data.data.userData.user_id, this.state.page)
+					console.log('response :>> ', response, response.data.userData.user_id);
+					// console.log('response :>> ', response, response.data.data.userData);
+					if (response?.data) {
+						this.setState({ userId: response.data.userData.user_id, orderId: response.data.userData.order_id })
+						this.fetchdata(response.data.userData.order_id, this.state.page)
 					}
-					console.log('response :>> ', response, response.data.data.userData.user_id);
 				}
 			} catch (error) {
 				console.log('error :>> ', error);
@@ -163,8 +163,8 @@ class ImageMapEditor extends Component {
 	fetchdata = async (id, page) => {
 		try {
 			const res = await getDataApi(id, page)
-			// const res = await getDataApi(this.state.userId)
-			this.handlers.onFetch(res.data.data[0].custom_string_data)
+			console.log(`ggg`, res.data.data);
+			this.handlers.onFetch(res.data.data.length && res.data.data[0].custom_string_data || "{}")
 			this.setState({
 				canvasloading: false
 			})
@@ -215,7 +215,7 @@ class ImageMapEditor extends Component {
 	componentDidUpdate = (prev, prevState) => {
 		console.log('object :>> ', prev, prevState, this.state);
 		if (prevState.page !== this.state.page) {
-			this.fetchdata(this.state.userId, this.state.page)
+			this.fetchdata(this.state.orderId, this.state.page)
 		}
 	}
 
@@ -618,21 +618,27 @@ class ImageMapEditor extends Component {
 		},
 
 		onFetch: (data) => {
+			console.log('objects 5656**/:>> ', data);
+
 			const { objects, animations, styles, dataSources } = JSON.parse(data);
 			this.setState({
 				animations,
 				styles,
 				dataSources,
+				clearPage: !!!objects
 			});
+			this.canvasRef.handler.clear(true);
 			if (objects) {
-				this.canvasRef.handler.clear(true);
 				const data = objects.filter(obj => {
 					if (!obj.id) {
 						return false;
 					}
 					return true;
 				});
+				console.log('data /*/**/ :>> ', data);
 				this.canvasRef.handler.importJSON(data);
+			} else {
+				this.canvasRef.handler.importJSON([]);
 			}
 		},
 
@@ -748,8 +754,8 @@ class ImageMapEditor extends Component {
 				styles,
 				dataSources,
 			};
-			console.log('exportDatas :>> ', exportDatas, exportDatas?.objects[1]?.src);
-			addDataApi(this.state?.userId, this.state.page, JSON.stringify(exportDatas))
+			console.log('4844****', exportDatas, this.state, '****', this.state?.orderId);
+			addDataApi(this.state?.orderId, this.state.page, JSON.stringify(exportDatas))
 			this.showLoading(false);
 		},
 		onChangeAnimations: animations => {
@@ -822,6 +828,7 @@ class ImageMapEditor extends Component {
 			objects,
 			previewCloseButton,
 			page,
+			clearPage,
 		} = this.state;
 		const {
 			onAdd,
@@ -951,6 +958,7 @@ class ImageMapEditor extends Component {
 							objectOption={defaultOption}
 							propertiesToInclude={propertiesToInclude}
 							onModified={onModified}
+							clearPage={clearPage}
 							onAdd={onAdd}
 							onRemove={onRemove}
 							onSelect={onSelect}

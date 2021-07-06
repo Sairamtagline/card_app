@@ -64,7 +64,7 @@ class Canvas extends Component<CanvasProps, IState> {
 			canvasOption: mergedCanvasOption,
 			...other,
 		});
-		
+
 		this.handler.workarea.set({
 			width: 280,
 			height: 450,
@@ -74,6 +74,18 @@ class Canvas extends Component<CanvasProps, IState> {
 			this.createObserver();
 		} else {
 			this.handleLoad();
+		}
+	}
+
+	// componentWillUpdate() {
+	// 	console.log('jjkjkjk :>> ');
+	// }
+	componentWillReceiveProps() {
+		if (this.props.clearPage) {
+			this.handler.workarea.set({
+				width: 280,
+				height: 450,
+			})
 		}
 	}
 

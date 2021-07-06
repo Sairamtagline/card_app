@@ -6,7 +6,7 @@ export const verifyToken = async () => {
 };
 
 export const getDataApi = async (id, page) => {
-    const response = await Api.post(`fetch/${page}`, { userId: id })
+    const response = await Api.post(`fetch/${page}`, { orderId: id })
     return response;
 };
 
@@ -16,6 +16,6 @@ export const getPreviewDataApi = async (id,page) => {
 };
 
 export const addDataApi = async (id, pageId, data) => {
-    const response = await Api.post('upload/', { userId: id, pageId, customString: data })
+    const response = await Api.post('upload/', { orderId: id, pageId, customString: data })
     return response;
 };
