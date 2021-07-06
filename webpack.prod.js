@@ -50,16 +50,16 @@ module.exports = merge(baseConfig, {
 			new TerserPlugin({
 				cache: true,
 				parallel: true,
-				terserOptions: {
-					warnings: false,
-					compress: {
-						warnings: false,
-						unused: true, // tree shaking(export된 모듈 중 사용하지 않는 모듈은 포함하지않음)
-					},
-					ecma: 6,
-					mangle: true,
-					unused: true,
-				},
+				// terserOptions: {
+				// 	warnings: false,
+				// 	compress: {
+				// 		warnings: false,
+				// 		unused: true, // tree shaking(export된 모듈 중 사용하지 않는 모듈은 포함하지않음)
+				// 	},
+				// 	ecma: 6,
+				// 	mangle: true,
+				// 	unused: true,
+				// },
 				sourceMap: true,
 			}),
 		],
