@@ -14,7 +14,7 @@ module.exports = merge(baseConfig, {
 		bundle: [
 			'@babel/polyfill',
 			'react-hot-loader/patch',
-			`webpack-dev-server/client?http://${host}:${devPort}`,
+			`webpack-dev-server/client?http://${host}:${process.env.PORT || devPort}`,
 			'webpack/hot/only-dev-server',
 			path.resolve(__dirname, 'src/index.js'),
 		],
@@ -27,7 +27,7 @@ module.exports = merge(baseConfig, {
 	},
 	devServer: {
 		inline: true,
-		port: devPort,
+		port: process.env.PORT || devPort,
 		contentBase: path.resolve(__dirname, 'public'),
 		hot: true,
 		publicPath: '/',
