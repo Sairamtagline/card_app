@@ -3,6 +3,10 @@
 	"version": "0.0.1",
 	"description": "Design Editor Tools with React.js + ant.design + fabric.js",
 	"typings": "lib/index.d.ts",
+	"engines": {
+		"node": "12.19.x",
+		"npm": "6.14.x"
+	},
 	"files": [
 		"dist",
 		"lib"
