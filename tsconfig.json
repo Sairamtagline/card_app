@@ -17,7 +17,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "target": "esnext",
-        "outDir": "lib",
+        "outDir": "./build/",
         "lib": [
             "dom",
             "esnext"

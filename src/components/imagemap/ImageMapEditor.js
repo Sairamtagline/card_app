@@ -131,11 +131,9 @@ class ImageMapEditor extends Component {
 				}
 				else {
 					const response = await verifyToken(token)
-					console.log('response :>> ', response, response.data.userData.user_id);
-					// console.log('response :>> ', response, response.data.data.userData);
 					if (response?.data) {
-						this.setState({ userId: response.data.userData.user_id, orderId: response.data.userData.order_id })
-						this.fetchdata(response.data.userData.order_id, this.state.page)
+						this.setState({ userId: response.data.data.userData.user_id, orderId: response.data.data.userData.order_id })
+						this.fetchdata(response.data.data.userData.order_id, this.state.page)
 					}
 				}
 			} catch (error) {

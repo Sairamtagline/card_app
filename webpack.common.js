@@ -5,7 +5,7 @@ module.exports = {
 		rules: [
 			{
 				test: /\.(js|jsx|tsx|ts)$/,
-				loader: 'babel-loader?cacheDirectory',
+				loader: 'babel-loader',
 				include: path.resolve(__dirname, 'src'),
 				options: {
 					presets: [
@@ -65,3 +65,73 @@ module.exports = {
 		tls: 'empty',
 	},
 };
+// const path = require('path');
+// const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+// const HtmlWebpackPlugin = require('html-webpack-plugin');
+
+// module.exports = {
+// 	module: {
+// 		// rules: [
+// 		// 	{
+// 		// 		loader: 'babel-loader?cacheDirectory',
+// 		// 		// loader: 'babel-loader',
+// 		// 		// test: /\.(js|jsx|tsx|ts)$/,
+// 		// 		test: /\.js$|jsx|tsx|ts/,
+// 		// 		exclude: /node_modules/
+// 		// 	}
+// 		// ],
+// 		rules: [
+// 			{
+// 				test: /\.(js|jsx|tsx|ts)$/,
+// 				loader: 'babel-loader?cacheDirectory',
+// 				include: path.resolve(__dirname, 'src'),
+// 				options: {
+// 					presets: [
+// 						['@babel/preset-env', { modules: false }],
+// 						'@babel/preset-react',
+// 						'@babel/preset-typescript',
+// 					],
+// 					plugins: [
+// 						'@babel/plugin-transform-runtime',
+// 						'@babel/plugin-syntax-dynamic-import',
+// 						['@babel/plugin-proposal-decorators', { legacy: true }],
+// 						'@babel/plugin-syntax-async-generators',
+// 						['@babel/plugin-proposal-class-properties', { loose: false }],
+// 						'@babel/plugin-proposal-object-rest-spread',
+// 						'react-hot-loader/babel',
+// 						'dynamic-import-webpack',
+// 						['import', { libraryName: 'antd', style: true }],
+// 					],
+// 				},
+// 				exclude: /node_modules/,
+// 			},
+// 			{
+// 				test: /\.(css|less)$/,
+// 				use: ['style-loader', 'css-loader', 'less-loader'],
+// 			},
+// 			{
+// 				test: /\.(ico|png|jpg|jpeg|gif|svg|woff|woff2|ttf|eot)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+// 				loader: 'url-loader',
+// 				options: {
+// 					publicPath: './',
+// 					name: 'fonts/[hash].[ext]',
+// 					limit: 10000,
+// 				},
+// 			},
+// 		],
+// 	},
+// 	entry: {
+// 		app: './src/index.js',
+// 	},
+// 	plugins: [
+// 		// new CleanWebpackPlugin(['dist/*']) for < v2 versions of CleanWebpackPlugin
+// 		new CleanWebpackPlugin(),
+// 		new HtmlWebpackPlugin({
+// 			title: 'Production',
+// 		}),
+// 	],
+// 	output: {
+// 		filename: '[name].bundle.js',
+// 		path: path.resolve(__dirname, 'dist'),
+// 	},
+// };

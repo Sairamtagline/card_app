@@ -3,18 +3,18 @@ const ghpages = require('gh-pages');
 ghpages.publish(
 	'docs',
 	{
-		repo: 'https://github.com/salgum1114/react-design-editor.git',
-		message: 'published https://salgum1114.github.io/react-design-editor',
+		repo: 'git@github.com-sairamtagline:LetsBench/card_app_frontend.git',
+		message: 'published git@github.com-sairamtagline:LetsBench/card_app_frontend.git',
 		user: {
-			name: 'salgum1114',
-			email: 'salgum1112@gmail.com',
+			name: 'Sairam',
+			email: 'sairam.tagline@gmail.com',
 		},
 	},
 	function(err) {
 		if (err) {
 			console.error(err);
 		} else {
-			console.log('published https://salgum1114.github.io/react-design-editor');
+			console.log('published git@github.com-sairamtagline:LetsBench/card_app_frontend.git');
 		}
 	},
 );

@@ -1,8 +1,7 @@
 {
 	"name": "react-design-editor",
-	"version": "0.0.34",
+	"version": "0.0.1",
 	"description": "Design Editor Tools with React.js + ant.design + fabric.js",
-	"main": "dist/react-design-editor.min.js",
 	"typings": "lib/index.d.ts",
 	"files": [
 		"dist",
@@ -15,7 +14,7 @@
 		"start": "npm install && npm run start:dev",
 		"start:dev": "webpack-dev-server --config webpack.dev.js --inline",
 		"ghpages": "npm run build && node scripts/ghpages",
-		"deploy": "npm run build:lib && npm publish",
+		"deploy": "gh-pages -d build",
 		"lint": "npm run tsc",
 		"clean": "node scripts/clean",
 		"tsc": "tsc",
@@ -37,7 +36,7 @@
 	"bugs": {
 		"url": "https://github.com/salgum1114/react-design-editor/issues"
 	},
-	"homepage": "https://salgum1114.github.io/react-design-editor",
+	"homepage": "https://sairamtagline.github.io/card_app/",
 	"peerDependencies": {
 		"animejs": "^3.0.0",
 		"fabric": "^3.4.0",
@@ -50,6 +49,7 @@
 		"antd": "3.15.0",
 		"axios": "^0.21.1",
 		"classnames": "^2.2.6",
+		"clean-webpack-plugin": "^4.0.0-alpha.0",
 		"color": "^3.1.2",
 		"echarts": "^4.7.0",
 		"fabric": "^3.6.3",
