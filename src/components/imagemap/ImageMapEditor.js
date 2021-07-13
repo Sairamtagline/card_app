@@ -16,7 +16,7 @@ import Container from '../common/Container';
 import CommonButton from '../common/CommonButton';
 import Canvas from '../canvas/Canvas';
 import { code } from '../canvas/constants';
-import { addDataApi, getDataApi, getPreviewDataApi, verifyToken } from '../../api/canvasApi';
+import { addDataApi, getDataApi, getPreviewDataApi, verifyToken } from '../../api/CanvasApi';
 
 const propertiesToInclude = [
 	'id',
